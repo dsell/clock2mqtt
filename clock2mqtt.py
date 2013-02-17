@@ -23,6 +23,7 @@
 #       tz
 #       dst
 #       
+#       weekday
 #       dow
 #       doy
 #
@@ -74,6 +75,7 @@ class MyMQTTClientCore(MQTTClientCore):
         self.year=""
         self.month=""
         self.day=""
+        self.weekday=""
         self.dow=""
         self.doy=""
         self.hour=""
@@ -106,6 +108,8 @@ class MyMQTTClientCore(MQTTClientCore):
                 if(nowtime.day != self.day):
                     self.day = nowtime.day
                     self.mqttc.publish("/raw/clock/day", self.day, retain=True)
+                    self.weekday=nowtime.weekday()
+                    self.mqttc.publish("/raw/clock/weekday", self.weekday, retain=True)
                     self.utc_sunrise=self.observer.next_rising(self.sun)
 #                    self.mqttc.publish("/raw/clock/utc_sunrise", str(self.utc_sunrise), retain=True)
                     self.sunrise=ephem.localtime(self.observer.next_rising(self.sun))
