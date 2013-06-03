@@ -40,7 +40,7 @@ __copyright__ = "Copyright (C) Dennis Sell"
 
 
 APPNAME = "clock2mqtt"
-VERSION = "0.10"
+VERSION = "0.11"
 
 
 import sys
@@ -141,7 +141,7 @@ class MyMQTTClientCore(MQTTClientCore):
                         self.hour = 12
                     self.mqttc.publish("/raw/clock/hour", self.hour, retain=True)
                     self.mqttc.publish("/raw/clock/militaryhour", self.mil_hour, retain=True)
-                    if(((self.mil_hour == 11) and (self.minute > 59)) or (self.mil_hour > 11)):
+                    if(((self.mil_hour == 11) and (self.minute > 59)) or (self.mil_hour > 11)):  #  is this right????
                         self.ampm = "PM"
                     else:
                         self.ampm = "AM"
@@ -149,7 +149,7 @@ class MyMQTTClientCore(MQTTClientCore):
                 if(nowtime.minute != self.minute):
                     self.minute = nowtime.minute
                     self.mqttc.publish("/raw/clock/minute", self.minute, retain=True)
-                if(nowtime.day == self.sunrise.day):
+                if(nowtime.day == self.sunrise.day):        # is this right???
                     temp = "set" 
                 else:
                     if(nowtime.day == self.sunset.day):
