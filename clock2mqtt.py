@@ -52,7 +52,6 @@ import subprocess
 import logging
 import signal
 import threading
-import pymetar
 import commands
 import datetime
 import ephem
@@ -141,21 +140,21 @@ class MyMQTTClientCore(MQTTClientCore):
                         self.hour = 12
                     self.mqttc.publish("/raw/clock/hour", self.hour, retain=True)
                     self.mqttc.publish("/raw/clock/militaryhour", self.mil_hour, retain=True)
-                    if(((self.mil_hour == 11) and (self.minute > 59)) or (self.mil_hour > 11)):  #  is this right????
+                    if(self.mil_hour > 11):
                         self.ampm = "PM"
                     else:
                         self.ampm = "AM"
-                    self.mqttc.publish("/raw/clock/ampm", self.ampm, retain=True)
+                    if((self.mil_hour == 12) or (self.mil_hour == 0)):
+                        self.mqttc.publish("/raw/clock/ampm", self.ampm, retain=True)
                 if(nowtime.minute != self.minute):
                     self.minute = nowtime.minute
                     self.mqttc.publish("/raw/clock/minute", self.minute, retain=True)
-                if(nowtime.day == self.sunrise.day):        # is this right???
+                if(nowtime < self.sunrise):        # is this right???
                     temp = "set" 
+                elif(nowtime > self.sunset):
+                    temp="set"
                 else:
-                    if(nowtime.day == self.sunset.day):
-                        temp="rise"
-                    else:
-                        temp="set"
+                    temp="rise"
                 if(temp != self.sunstate):
                     self.sunstate=temp
                     self.mqttc.publish("/raw/clock/sunstate", self.sunstate, retain=True)
